@@ -10,7 +10,6 @@
       "name": "python"
     }
   },
-    {
       "cell_type": "markdown",
       "metadata": {
         "id": "view-in-github",
