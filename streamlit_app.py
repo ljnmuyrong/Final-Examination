@@ -10,7 +10,6 @@
       "name": "python"
     }
   },
-  "cells": [
     {
       "cell_type": "markdown",
       "metadata": {
