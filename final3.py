@@ -8,44 +8,37 @@ Original file is located at
 """
 
 import streamlit as st
-import requests
-import h5py
 import tensorflow as tf
-from io import BytesIO
-from PIL import Image
 
-import streamlit as st
-import tensorflow as tf
-from PIL import Image, ImageOps
-import numpy as np
-import os
-
-@st.cache(allow_output_mutation=True)
-
+@st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model("finalfinal.hdf5")  # Specify the correct path to your HDF5 model file
-    return model
+  model=tf.keras.models.load_model('plant_classifier.hdf5')
+  return model
+model=load_model()
+st.write("""
+# Image classification model
+-Muyrong, Caberte
+"""
+)
+file=st.file_uploader("Choose a photo from computer to classify",type=["jpg","png"])
 
-    if os.path.exists(model_path):
-        model = tf.keras.models.load_model(model_path)
-        return model
+import cv2
+from PIL import Image,ImageOps
+import numpy as np
+def import_and_predict(image_data,model):
+    size=(64,64)
+    image=ImageOps.fit(image_data,size)
+    img=np.asarray(image)
+    img_reshape=img[np.newaxis,...]
+    prediction=model.predict(img_reshape)
+    return prediction
+if file is None:
+    st.text("Please upload an image file")
+else:
+    image=Image.open(file)
+    st.image(image,use_column_width=True)
+    prediction=import_and_predict(image,model)
+    class_names=[''Dinosaur', 'Flag', 'Airplane', 'Puppy']
+    string="OUTPUT : "+class_names[np.argmax(prediction)]
+    st.success(string)
 
-def predict(image, model):
-    img_array = np.array(image)
-    img_array = tf.image.resize(img_array, (150, 150))
-    img_array = tf.expand_dims(img_array, 0)
-    img_array = img_array / 255.0
-
-    predictions = model.predict(img_array)
-    predicted_class = class_mapping[np.argmax(predictions[0])]
-    return predicted_class
-
-uploaded_file = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
-
-if uploaded_file is not None:
-    image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Image.', use_column_width=True)
-    model = load_model()
-
-    predicted_class = predict(image, model)
-    st.write(f"Prediction: {predicted_class}")
